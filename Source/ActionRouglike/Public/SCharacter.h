@@ -36,12 +36,32 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void PrimaryAttack(const FInputActionValue& Value);
+	void BlackHoleAttack(const FInputActionValue& Value);
+	void Dash(const FInputActionValue& Value);
+	void PrimaryInteract(const FInputActionValue& Value);
+	
+private:
+	UFUNCTION()
+	FVector AttackLineTrace();
+	UFUNCTION()
+	void PrimaryAttack_TimeElapsed();
+	UFUNCTION()
+	void BlackHoleAttack_TimeElapsed();
+	UFUNCTION()
+	void Dash_TimeElapsed();
+	
+	UFUNCTION()
+	void SpawnActor(const TSubclassOf<AActor>& ClassToSpawn);
+	
+public:
+	FRotator OffsetRotation;
 private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
 	TObjectPtr<class UCameraComponent> CameraComp;
-
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
+	TObjectPtr<class USInteractionComponent> InteractionComp;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -56,7 +76,23 @@ private:
 	TObjectPtr<class UInputAction> JumpAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> PrimaryAttackAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> BlackHoleAttackAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> DashAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> PrimaryInteractAction;
+	
 	UPROPERTY(EditAnywhere,Category ="SpawnClass")
 	TSubclassOf<AActor> ProjectileClass;
+	UPROPERTY(EditAnywhere,Category ="SpawnClass")
+	TSubclassOf<AActor> BlackHoleProjectileClass;
+	UPROPERTY(EditAnywhere,Category ="SpawnClass")
+	TSubclassOf<AActor> DashProjectileClass;
+	UPROPERTY(EditAnywhere,Category = "Atack")
+	TObjectPtr<class UAnimMontage> AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_BlackHoleAttack;
+	FTimerHandle TimerHandle_Dash;
 };

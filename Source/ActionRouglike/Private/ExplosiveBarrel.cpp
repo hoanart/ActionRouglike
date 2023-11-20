@@ -43,11 +43,13 @@ void AExplosivBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	FVector NormalImpulse, const FHitResult& Hit)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Proj Blocking"));
-	RadialForceComp->FireImpulse();	
+	Explode();
 	if(Hit.bBlockingHit)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Blocking"));
 	}
+	FString CombinedString = FString::Printf(TEXT("Hit at location : %s"),*Hit.ImpactPoint.ToString());
+	DrawDebugString(GetWorld(),Hit.ImpactPoint,CombinedString,nullptr,FColor::Green,2.0f,true);
 	if(TObjectPtr<AASMagicProjectile> Projectile = Cast<AASMagicProjectile>(OtherActor))
 	{
 		
@@ -60,5 +62,10 @@ void AExplosivBarrel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AExplosivBarrel::Explode()
+{
+	RadialForceComp->FireImpulse();	
 }
 
