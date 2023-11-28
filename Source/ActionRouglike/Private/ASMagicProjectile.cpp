@@ -3,6 +3,7 @@
 
 #include "ASMagicProjectile.h"
 
+#include "SAttributeComponent.h"
 #include "SCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -21,7 +22,7 @@ AASMagicProjectile::AASMagicProjectile()
 void AASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	//SphereComp->OnComponentBeginOverlap.AddDynamic(this,&AASMagicProjectile::OnOverlap);
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this,&AASMagicProjectile::OnOverlap);
 	//SphereComp->OnComponentHit.AddDynamic(this,&AASMagicProjectile::OnHit);
 	SphereComp->IgnoreActorWhenMoving(GetInstigator(),true);	
 	//Player->GetControlRotation()
@@ -30,10 +31,14 @@ void AASMagicProjectile::BeginPlay()
 void AASMagicProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
 {
-	if(GetInstigator()!=OtherActor)
+	if(GetInstigator()!=OtherActor&&OtherActor)
 	{
-	DrawDebugSphere(GetWorld(),GetActorLocation(),5.0f,10,FColor::Green,false,2.0f,0,1.0f);
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),MagicParticle,GetActorLocation(),GetActorRotation());
+		TObjectPtr<USAttributeComponent> AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if(IsValid(AttributeComp))
+		{
+			AttributeComp->ApplyHealthChange(-20.0f);
+		}
+	Explode();
 	}
 }
 

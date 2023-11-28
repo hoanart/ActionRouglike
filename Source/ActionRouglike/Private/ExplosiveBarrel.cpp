@@ -4,6 +4,7 @@
 #include "ExplosiveBarrel.h"
 
 #include "ASMagicProjectile.h"
+#include "SAttributeComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
@@ -42,6 +43,8 @@ void AExplosivBarrel::BeginPlay()
 void AExplosivBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	if(IsValid(OtherActor))
+	{
 	UE_LOG(LogTemp,Warning,TEXT("Proj Blocking"));
 	Explode();
 	if(Hit.bBlockingHit)
@@ -50,10 +53,14 @@ void AExplosivBarrel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	}
 	FString CombinedString = FString::Printf(TEXT("Hit at location : %s"),*Hit.ImpactPoint.ToString());
 	DrawDebugString(GetWorld(),Hit.ImpactPoint,CombinedString,nullptr,FColor::Green,2.0f,true);
-	if(TObjectPtr<AASMagicProjectile> Projectile = Cast<AASMagicProjectile>(OtherActor))
-	{
 		
+		TObjectPtr<USAttributeComponent> AttribComp = Cast<USAttributeComponent>( OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if(IsValid(AttribComp))
+		{
+			AttribComp->ApplyHealthChange(-50.0f);
+		}
 	}
+	
 	
 }
 

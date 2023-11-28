@@ -62,7 +62,8 @@ private:
 	TObjectPtr<class UCameraComponent> CameraComp;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USInteractionComponent> InteractionComp;
-
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Components",meta =(AllowPrivateAccess = true))
+	TObjectPtr<class USAttributeComponent> AttributeComp;
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputMappingContext> DefaultMappingContext;

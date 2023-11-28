@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -27,7 +28,7 @@ GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
-	
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 }
 
 // Called when the game starts or when spawned
@@ -144,17 +145,22 @@ void ASCharacter::BlackHoleAttack_TimeElapsed()
 
 void ASCharacter::SpawnActor(const TSubclassOf<AActor>& ClassToSpawn)
 {
-	FVector Offset = AttackLineTrace();
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	OffsetRotation = FRotationMatrix::MakeFromX(Offset-HandLocation).Rotator();
-	FTransform SpawnTM = FTransform(OffsetRotation,HandLocation);
-	UE_LOG(LogTemp,Warning,TEXT("Rotation : %s"),*OffsetRotation.ToString());
 	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	GetWorld()->SpawnActor<AActor>( ClassToSpawn,SpawnTM,SpawnParams);
+	if(ensure(ClassToSpawn))
+	{
+		FVector Offset = AttackLineTrace();
+		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+		OffsetRotation = FRotationMatrix::MakeFromX(Offset-HandLocation).Rotator();
+		FTransform SpawnTM = FTransform(OffsetRotation,HandLocation);
+		UE_LOG(LogTemp,Warning,TEXT("Rotation : %s"),*OffsetRotation.ToString());
+	
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
+		GetWorld()->SpawnActor<AActor>( ClassToSpawn,SpawnTM,SpawnParams);
+	}
+	
 }
 
 FVector ASCharacter::AttackLineTrace()

@@ -24,7 +24,11 @@ void ASDashProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 	FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-	GetInstigator()->TeleportTo(GetActorLocation(),GetActorRotation());
+	if(GetInstigator()!=OtherActor)
+	{
+		GetInstigator()->TeleportTo(GetActorLocation(),GetActorRotation());	
+	}
+	
 }
 
 void ASDashProjectile::Explode()
