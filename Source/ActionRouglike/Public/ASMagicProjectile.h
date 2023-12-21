@@ -17,6 +17,7 @@ public:
 	AASMagicProjectile();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintCallable)
@@ -24,5 +25,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+protected:
+	UPROPERTY(EditDefaultsOnly,Category = "Damage")
+	float DamageAmount;
 };

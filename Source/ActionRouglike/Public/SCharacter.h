@@ -17,6 +17,7 @@ public:
 	ASCharacter();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -52,9 +53,14 @@ private:
 	
 	UFUNCTION()
 	void SpawnActor(const TSubclassOf<AActor>& ClassToSpawn);
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor,class USAttributeComponent* OwningComp,float NewHealth,float Delta);
 	
 public:
 	FRotator OffsetRotation;
+protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Components",meta =(AllowPrivateAccess = true))
+	TObjectPtr<class USAttributeComponent> AttributeComp;
 private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
@@ -62,8 +68,7 @@ private:
 	TObjectPtr<class UCameraComponent> CameraComp;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USInteractionComponent> InteractionComp;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Components",meta =(AllowPrivateAccess = true))
-	TObjectPtr<class USAttributeComponent> AttributeComp;
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputMappingContext> DefaultMappingContext;

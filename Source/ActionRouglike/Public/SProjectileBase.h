@@ -16,20 +16,21 @@ public:
 	ASProjectileBase();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	
-	
-	UFUNCTION(BlueprintCallable)
+	virtual void PostInitializeComponents() override;
+	UFUNCTION()
 	virtual void OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void Explode();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 protected:
-	UPROPERTY(EditAnywhere,Category="Particles")
+	UPROPERTY(EditAnywhere,Category="Effects")
 	TObjectPtr<class UParticleSystem> MagicParticle;
+	UPROPERTY(EditDefaultsOnly,Category="Effects")
+	TObjectPtr<class USoundCue> ImpactSound;
 protected:
 	UPROPERTY(VisibleAnywhere,Category = "Components")
 	TObjectPtr<class USphereComponent> SphereComp;
@@ -39,4 +40,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,Category = "Components")
 	TObjectPtr<class UParticleSystemComponent> EffectComp;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Components")
+	TObjectPtr<class UAudioComponent> AudioComp;
+	
 };

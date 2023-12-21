@@ -14,17 +14,24 @@
 AASMagicProjectile::AASMagicProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-
+	DamageAmount = 20.0f;
 	
+}
+
+void AASMagicProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this,&AASMagicProjectile::OnOverlap);
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(),true);	
 }
 
 // Called when the game starts or when spawned
 void AASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this,&AASMagicProjectile::OnOverlap);
+
 	//SphereComp->OnComponentHit.AddDynamic(this,&AASMagicProjectile::OnHit);
-	SphereComp->IgnoreActorWhenMoving(GetInstigator(),true);	
+
 	//Player->GetControlRotation()
 }
 
@@ -36,9 +43,10 @@ void AASMagicProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		TObjectPtr<USAttributeComponent> AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if(IsValid(AttributeComp))
 		{
-			AttributeComp->ApplyHealthChange(-20.0f);
+			AttributeComp->ApplyHealthChange(-DamageAmount);
+			Explode_Implementation();
 		}
-	Explode();
+	
 	}
 }
 

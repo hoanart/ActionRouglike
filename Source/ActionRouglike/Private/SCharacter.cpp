@@ -31,6 +31,12 @@ GetCharacterMovement()->bOrientRotationToMovement = true;
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this,&ASCharacter::OnHealthChanged);
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -150,6 +156,7 @@ void ASCharacter::SpawnActor(const TSubclassOf<AActor>& ClassToSpawn)
 	{
 		FVector Offset = AttackLineTrace();
 		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		
 
 		OffsetRotation = FRotationMatrix::MakeFromX(Offset-HandLocation).Rotator();
 		FTransform SpawnTM = FTransform(OffsetRotation,HandLocation);
@@ -158,9 +165,25 @@ void ASCharacter::SpawnActor(const TSubclassOf<AActor>& ClassToSpawn)
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParams.Instigator = this;
+		
 		GetWorld()->SpawnActor<AActor>( ClassToSpawn,SpawnTM,SpawnParams);
 	}
 	
+}
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
+	float Delta)
+{
+	if(Delta<0.0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit",GetWorld()->TimeSeconds);
+	}
+	if(NewHealth<=0.0f&&Delta<0.0f)
+	{
+		TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetController());
+		
+		DisableInput(PC);
+	}
 }
 
 FVector ASCharacter::AttackLineTrace()
@@ -181,7 +204,7 @@ FVector ASCharacter::AttackLineTrace()
 		//GetWorld()->LineTraceSingleByObjectType(Hit, GetActorLocation(),End,ObjectQueryParams);
 	FColor LineColor = bBlockingHit? FColor::Green : FColor::Red;
 
-	DrawDebugLine(GetWorld(), CameraComp->GetComponentLocation(),End,LineColor,true,2.0f,0,2);
+	//DrawDebugLine(GetWorld(), CameraComp->GetComponentLocation(),End,LineColor,false,2.0f,0,2);
 
 	
 	return bBlockingHit? Hit.ImpactPoint : End;
@@ -199,6 +222,7 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 	GetWorld()->SpawnActor<AActor>( ProjectileClass,SpawnTM,SpawnParams);
+	
 }
 
 

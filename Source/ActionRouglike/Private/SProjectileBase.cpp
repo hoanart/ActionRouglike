@@ -3,10 +3,12 @@
 
 #include "SProjectileBase.h"
 
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 ASProjectileBase::ASProjectileBase()
@@ -17,9 +19,14 @@ ASProjectileBase::ASProjectileBase()
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	RootComponent = SphereComp;
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->OnComponentHit.AddDynamic(this,&ASProjectileBase::OnHit);
+	
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(RootComponent);
 	
+	AudioComp = CreateDefaultSubobject<UAudioComponent>("AudioComp");
+	AudioComp->SetupAttachment(RootComponent);
+		
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MoveComp");
 	MovementComp->InitialSpeed = 8000.0f;
 	MovementComp->ProjectileGravityScale = 0.0f;
@@ -27,15 +34,14 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->bInitialVelocityInLocalSpace = true;
 }
 
-// Called when the game starts or when spawned
-void ASProjectileBase::BeginPlay()
+void ASProjectileBase::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
+	Super::PostInitializeComponents();
 }
 
+
 void ASProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+                             FVector NormalImpulse, const FHitResult& Hit)
 {
 	if(GetInstigator()!=OtherActor)
 	{
@@ -43,16 +49,24 @@ void ASProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 	}
 }
 
-void ASProjectileBase::Explode()
+void ASProjectileBase::Explode_Implementation()
 {
-	DrawDebugSphere(GetWorld(),GetActorLocation(),5.0f,10,FColor::Green,false,2.0f,0,1.0f);
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),MagicParticle,GetActorLocation(),GetActorRotation());
-	EffectComp->DeactivateSystem();
-	MovementComp->StopMovementImmediately();
-	SetActorEnableCollision(false);
-	//UE_LOG(LogTemp,Warning,TEXT("Hit : %s"),*OtherActor->GetName());
-	//UE_LOG(LogTemp,Warning,TEXT("Hit : %s"),*GetActorRotation().ToString());
-	Destroy();
+	if(ensure(IsValid(SphereComp)))
+	{
+		 DrawDebugSphere(GetWorld(),GetActorLocation(),10.0f,10,FColor::Magenta,false,2.0f,0,1.0f);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),MagicParticle,GetActorLocation(),GetActorRotation());
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(),ImpactSound,GetActorLocation());
+		
+		EffectComp->DeactivateSystem();
+		MovementComp->StopMovementImmediately();
+		
+		SetActorEnableCollision(false);
+		
+		//UE_LOG(LogTemp,Warning,TEXT("Hit : %s"),*OtherActor->GetName());
+		//UE_LOG(LogTemp,Warning,TEXT("Hit : %s"),*GetActorRotation().ToString());
+		Destroy();
+	}
+	
 }
 
 // Called every frame
