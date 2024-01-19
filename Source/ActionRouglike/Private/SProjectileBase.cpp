@@ -32,6 +32,9 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->ProjectileGravityScale = 0.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+
+	ImpactShakeInnerRadius = 0.0f;
+	ImpactShakeOuterRadius = 1500.0f;
 }
 
 void ASProjectileBase::PostInitializeComponents()
@@ -56,7 +59,7 @@ void ASProjectileBase::Explode_Implementation()
 		 DrawDebugSphere(GetWorld(),GetActorLocation(),10.0f,10,FColor::Magenta,false,2.0f,0,1.0f);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),MagicParticle,GetActorLocation(),GetActorRotation());
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(),ImpactSound,GetActorLocation());
-		
+		UGameplayStatics::PlayWorldCameraShake(GetWorld(),CameraShake,GetActorLocation(),ImpactShakeInnerRadius,ImpactShakeOuterRadius);
 		EffectComp->DeactivateSystem();
 		MovementComp->StopMovementImmediately();
 		

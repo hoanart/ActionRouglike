@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SHealthPotion.h"
+#include "SPowerupHealthPotion.h"
 
 #include "SAttributeComponent.h"
 #include "Components/SphereComponent.h"
@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
-ASHealthPotion::ASHealthPotion()
+ASPowerupHealthPotion::ASPowerupHealthPotion()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -23,18 +23,18 @@ ASHealthPotion::ASHealthPotion()
 
 }
 
-void ASHealthPotion::PostInitializeComponents()
+void ASPowerupHealthPotion::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
 
 // Called when the game starts or when spawned
-void ASHealthPotion::BeginPlay()
+void ASPowerupHealthPotion::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
+void ASPowerupHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
 	ISGamePlayInterface::Interact_Implementation(InstigatorPawn);
 	UE_LOG(LogTemp,Display,TEXT("상호작용"));
@@ -43,19 +43,19 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	SetActorEnableCollision(false);
 	if(AttributeComp->ApplyHealthChangeByActor(this,AttributeComp->GetHealthMax()))
 	{
-		GetWorldTimerManager().SetTimer(InActiveTimer,this,&ASHealthPotion::TempStop,10.0f);
+		GetWorldTimerManager().SetTimer(InActiveTimer,this,&ASPowerupHealthPotion::TempStop,10.0f);
 	}
 	
 }
 
-void ASHealthPotion::TempStop()
+void ASPowerupHealthPotion::TempStop()
 {
 	RootComponent->SetVisibility(true);
 	SetActorEnableCollision(true);
 }
 
 // Called every frame
-void ASHealthPotion::Tick(float DeltaTime)
+void ASPowerupHealthPotion::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

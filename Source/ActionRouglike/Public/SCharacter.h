@@ -98,6 +98,9 @@ private:
 	UPROPERTY(EditAnywhere,Category = "Atack")
 	TObjectPtr<class UAnimMontage> AttackAnim;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	TObjectPtr<class UParticleSystem> CastingParticle;
+	
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackHoleAttack;
 	FTimerHandle TimerHandle_Dash;

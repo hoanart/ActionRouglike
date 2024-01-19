@@ -45,6 +45,7 @@ void AASMagicProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		{
 			AttributeComp->ApplyHealthChange(-DamageAmount);
 			Explode_Implementation();
+			
 		}
 	
 	}

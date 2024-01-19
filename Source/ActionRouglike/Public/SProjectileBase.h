@@ -31,6 +31,16 @@ protected:
 	TObjectPtr<class UParticleSystem> MagicParticle;
 	UPROPERTY(EditDefaultsOnly,Category="Effects")
 	TObjectPtr<class USoundCue> ImpactSound;
+	
+	UPROPERTY(EditDefaultsOnly,Category="Effects|Shake")
+	TSubclassOf<class UCameraShakeBase> CameraShake;
+
+	UPROPERTY(EditDefaultsOnly,Category="Effects|Shake")
+	float ImpactShakeInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly,Category="Effects|Shake")
+	float ImpactShakeOuterRadius;
+	
 protected:
 	UPROPERTY(VisibleAnywhere,Category = "Components")
 	TObjectPtr<class USphereComponent> SphereComp;
@@ -43,5 +53,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Components")
 	TObjectPtr<class UAudioComponent> AudioComp;
-	
+
+
 };

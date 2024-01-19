@@ -11,6 +11,7 @@
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -122,6 +123,10 @@ void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
 {
 	
 	PlayAnimMontage(AttackAnim);
+	if(ensure(CastingParticle))
+	{
+		UGameplayStatics::SpawnEmitterAttached(CastingParticle,GetMesh(),"Muzzle_01");	
+	}
 	
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this,&ASCharacter::PrimaryAttack_TimeElapsed,0.2f);
 	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
