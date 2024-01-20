@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "SGamePlayInterface.h"
+#include "SPowerupActor.h"
 #include "GameFramework/Actor.h"
 #include "SPowerupHealthPotion.generated.h"
 
 UCLASS()
-class ACTIONROUGLIKE_API ASPowerupHealthPotion : public AActor,public ISGamePlayInterface
+class ACTIONROUGLIKE_API ASPowerupHealthPotion : public ASPowerupActor
 {
 	GENERATED_BODY()
 	
@@ -20,19 +21,13 @@ protected:
 	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Interact_Implementation(APawn* InstigatorPawn) override;
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
 	void TempStop();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 protected:
-
-protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
-	TObjectPtr<class USphereComponent> SphereComp;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components",meta=(AllowPrivateAccess=true))
-	TObjectPtr<UStaticMeshComponent> Mesh;
 
 private:
 	FTimerHandle InActiveTimer;

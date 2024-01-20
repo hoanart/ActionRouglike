@@ -33,8 +33,8 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 
-	ImpactShakeInnerRadius = 0.0f;
-	ImpactShakeOuterRadius = 1500.0f;
+	ImpactShakeInnerRadius = 250.0f;
+	ImpactShakeOuterRadius = 2500.0f;
 }
 
 void ASProjectileBase::PostInitializeComponents()

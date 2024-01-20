@@ -13,11 +13,6 @@ ASPowerupHealthPotion::ASPowerupHealthPotion()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
-	SphereComp->SetupAttachment(RootComponent);
-	RootComponent = SphereComp;
-	SphereComp->SetGenerateOverlapEvents(true);
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	
 	Mesh->SetGenerateOverlapEvents(true);
 
@@ -36,15 +31,22 @@ void ASPowerupHealthPotion::BeginPlay()
 
 void ASPowerupHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
-	ISGamePlayInterface::Interact_Implementation(InstigatorPawn);
+	if(!ensure(InstigatorPawn))
+	{
+		return;
+	}
 	UE_LOG(LogTemp,Display,TEXT("상호작용"));
 	TObjectPtr<USAttributeComponent> AttributeComp= USAttributeComponent::GetAttributes(InstigatorPawn);
-	RootComponent->SetVisibility(false);
-	SetActorEnableCollision(false);
-	if(AttributeComp->ApplyHealthChangeByActor(this,AttributeComp->GetHealthMax()))
+	if(ensure(AttributeComp)&&!AttributeComp->IsFullHealth())
 	{
-		GetWorldTimerManager().SetTimer(InActiveTimer,this,&ASPowerupHealthPotion::TempStop,10.0f);
+		if(AttributeComp->ApplyHealthChangeByActor(this,AttributeComp->GetHealthMax()))
+		{
+			HideAndCooldownPowerup();
+		}
+		
 	}
+	
+	
 	
 }
 

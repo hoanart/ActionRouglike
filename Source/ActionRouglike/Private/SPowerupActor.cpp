@@ -39,7 +39,7 @@ void ASPowerupActor::Tick(float DeltaTime)
 
 void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
 {
-	ISGamePlayInterface::Interact_Implementation(InstigatorPawn);
+	//ISGamePlayInterface::Interact_Implementation(InstigatorPawn);
 }
 
 void ASPowerupActor::OnRep_IsAlive()
