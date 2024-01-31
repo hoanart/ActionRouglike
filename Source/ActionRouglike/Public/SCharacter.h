@@ -55,6 +55,9 @@ private:
 	void SpawnActor(const TSubclassOf<AActor>& ClassToSpawn);
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor,class USAttributeComponent* OwningComp,float NewHealth,float Delta);
+
+	UFUNCTION()
+	void StartAttackEffect();
 	
 public:
 	FRotator OffsetRotation;
@@ -104,4 +107,9 @@ private:
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackHoleAttack;
 	FTimerHandle TimerHandle_Dash;
+
+	UPROPERTY(VisibleAnywhere, Category="Effect")
+	FName HandSocketName;
+	UPROPERTY(VisibleAnywhere, Category="Effect")
+	FName TimeToHitParamName;
 };

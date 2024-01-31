@@ -23,10 +23,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;	
 	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Attributes")
-	float Health;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Attributes")
-	float HealthMax;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
@@ -36,7 +33,8 @@ public:
 	const bool IsFullHealth() const;
 	UFUNCTION(BlueprintCallable)
 	const float& GetHealthMax() const;
-	
+	UFUNCTION(BlueprintCallable)
+	 bool IsLowHealth() const;
 public:
 	
 	UPROPERTY(BlueprintAssignable)
@@ -47,5 +45,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ApplyHealthChangeByActor(AActor* InstigatorActor,float Delta);
 	
-		
+protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Attributes")
+	float Health;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Attributes")
+	float HealthMax;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Attributes")
+	float LowThreshold;
+
 };

@@ -30,6 +30,9 @@ GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
+
+	HandSocketName = "Muzzle_01";
+	TimeToHitParamName = "TimeToHit";
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -125,7 +128,7 @@ void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
 	PlayAnimMontage(AttackAnim);
 	if(ensure(CastingParticle))
 	{
-		UGameplayStatics::SpawnEmitterAttached(CastingParticle,GetMesh(),"Muzzle_01");	
+		UGameplayStatics::SpawnEmitterAttached(CastingParticle,GetMesh(),HandSocketName);	
 	}
 	
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this,&ASCharacter::PrimaryAttack_TimeElapsed,0.2f);
@@ -160,7 +163,7 @@ void ASCharacter::SpawnActor(const TSubclassOf<AActor>& ClassToSpawn)
 	if(ensure(ClassToSpawn))
 	{
 		FVector Offset = AttackLineTrace();
-		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 		
 
 		OffsetRotation = FRotationMatrix::MakeFromX(Offset-HandLocation).Rotator();
@@ -181,7 +184,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 {
 	if(Delta<0.0f)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit",GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName,GetWorld()->TimeSeconds);
 	}
 	if(NewHealth<=0.0f&&Delta<0.0f)
 	{
@@ -189,6 +192,12 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		
 		DisableInput(PC);
 	}
+}
+
+void ASCharacter::StartAttackEffect()
+{
+	PlayAnimMontage(AttackAnim);
+	UGameplayStatics::SpawnEmitterAttached(CastingParticle,GetMesh(),HandSocketName,FVector::ZeroVector,FRotator::ZeroRotator,EAttachLocation::SnapToTarget);
 }
 
 FVector ASCharacter::AttackLineTrace()

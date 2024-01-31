@@ -14,14 +14,22 @@ class ACTIONROUGLIKE_API ASAICharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASAICharacter();
+protected:
+	virtual void PostInitializeComponents() override;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor,USAttributeComponent* OwningComp, float Health,float Delta);
+protected:
+	//Components
+	UPROPERTY(VisibleAnywhere,Category = "Components")
+	TObjectPtr<class UPawnSensingComponent> PawnSensingComp;
+	UPROPERTY(VisibleAnywhere,Category = "Components")
+	TObjectPtr<class USAttributeComponent> AttributeComp;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	
-
+protected:
+	UPROPERTY(VisibleAnywhere,Category="Effects")
+	FName TimeToHitParamName;
 };

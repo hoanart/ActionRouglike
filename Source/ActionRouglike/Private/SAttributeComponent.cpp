@@ -18,6 +18,7 @@ USAttributeComponent::USAttributeComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	Health = 100;
 	HealthMax = 100;
+	LowThreshold = 40.0f;
 	// ...	
 
 }
@@ -45,6 +46,12 @@ const bool USAttributeComponent::IsFullHealth() const
 const float& USAttributeComponent::GetHealthMax() const
 {
 	return HealthMax;
+}
+
+bool USAttributeComponent::IsLowHealth() const
+{
+	
+	return Health <= LowThreshold;
 }
 
 bool USAttributeComponent::ApplyHealthChange(float Delta)
